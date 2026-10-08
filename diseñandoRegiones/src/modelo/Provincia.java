@@ -32,5 +32,9 @@ public class Provincia {
 	    return Objects.hash(nombre);
 	 }
 	    
+	 @Override
+	 public String toString() {
+		 return this.nombre;
+	 }
 
 }
