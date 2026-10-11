@@ -140,6 +140,12 @@ public class VentanaPrincipal extends JFrame implements IVentanaPrincipal {
             if (seleccion == JFileChooser.APPROVE_OPTION) {
                 File archivo = fileChooser.getSelectedFile();
                 presenter.cargarGrafoDesdeArchivo(archivo);
+                
+                if(presenter.getGrafo().getProvincias().size() > 0 && presenter.getGrafo().esConexo()) {
+                	int k = (Integer) spinnerK.getValue();
+                	presenter.calcularRegiones(k);
+                }
+                
             }
         });
 
@@ -184,11 +190,17 @@ public class VentanaPrincipal extends JFrame implements IVentanaPrincipal {
                 double peso = Double.parseDouble(txtPeso.getText().trim());
 
                 presenter.agregarSimilaridad(p1, p2, peso);
+                
+                if(presenter.getGrafo().getProvincias().size() > 0 && presenter.getGrafo().esConexo()) {
+                	int k = (Integer) spinnerK.getValue();
+                	presenter.calcularRegiones(k);
+                }
+                
             } catch (NumberFormatException ex) {
                 mostrarError("Por favor ingrese un número válido para la similaridad/peso.");
             }
         });
-
+      
         return panel;
     }
 
@@ -204,11 +216,21 @@ public class VentanaPrincipal extends JFrame implements IVentanaPrincipal {
         panel.add(spinnerK);
         panel.add(btnCalcularRegiones);
 
-        // Evento Botón
+      
         btnCalcularRegiones.addActionListener(e -> {
             int k = (Integer) spinnerK.getValue();
             presenter.calcularRegiones(k);
         });
+        
+        //vuelve a calcular si se hacen cambios en k
+        spinnerK.addChangeListener(e ->{
+        	//se calcula automat. solo si el grafo tiene provincias cargadas y esta full conectaddo
+        	if(presenter.getGrafo().getProvincias().size() > 0 && presenter.getGrafo().esConexo()){
+        		int k = (Integer) spinnerK.getValue();
+        		presenter.calcularRegiones(k);
+        	}
+        });
+        
 
         return panel;
     }
